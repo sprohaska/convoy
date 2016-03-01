@@ -29,6 +29,7 @@ func getBackupConfigName(id string) string {
 }
 
 func loadConfigInObjectStore(filePath string, driver ObjectStoreDriver, v interface{}) error {
+	log.Errorln("before filesize")
 	size := driver.FileSize(filePath)
 	if size < 0 {
 		return fmt.Errorf("cannot find %v in objectstore", filePath)

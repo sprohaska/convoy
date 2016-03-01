@@ -30,6 +30,7 @@ func init() {
 }
 
 func initFunc(destURL string) (objectstore.ObjectStoreDriver, error) {
+	fmt.Print("xxx initFunc")
 	b := &S3ObjectStoreDriver{}
 
 	u, err := url.Parse(destURL)
@@ -41,6 +42,7 @@ func initFunc(destURL string) (objectstore.ObjectStoreDriver, error) {
 		return nil, fmt.Errorf("BUG: Why dispatch %v to %v?", u.Scheme, KIND)
 	}
 
+	b.service.Endpoint = "http://s3bak-0000-zib0a-devspr-darkdisney.node.zib0.consul:32789"
 	if u.User != nil {
 		b.service.Region = u.Host
 		b.service.Bucket = u.User.Username()
@@ -57,7 +59,7 @@ func initFunc(destURL string) (objectstore.ObjectStoreDriver, error) {
 	b.path = strings.TrimLeft(b.path, "/")
 
 	//Test connection
-	if _, err := b.List(""); err != nil {
+	if _, err := b.List("dummy"); err != nil {
 		return nil, err
 	}
 

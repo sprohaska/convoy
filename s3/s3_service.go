@@ -4,18 +4,30 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 )
 
 type S3Service struct {
-	Region string
-	Bucket string
+	Region   string
+	Bucket   string
+	Endpoint string
 }
 
 func (s *S3Service) New() (*s3.S3, error) {
-	return s3.New(session.New(), &aws.Config{Region: &s.Region}), nil
+	log.Errorln("xxx: " + s.Endpoint)
+	forcePathStyle := true
+	return s3.New(
+		session.New(),
+		&aws.Config{
+			Region:           &s.Region,
+			Endpoint:         &s.Endpoint,
+			Credentials:      credentials.AnonymousCredentials,
+			S3ForcePathStyle: &forcePathStyle,
+		},
+	), nil
 }
 
 func (s *S3Service) Close() {
@@ -34,6 +46,7 @@ func parseAwsError(resp string, err error) error {
 }
 
 func (s *S3Service) ListObjects(key, delimiter string) ([]*s3.Object, []*s3.CommonPrefix, error) {
+	log.Errorln("key: " + key)
 	svc, err := s.New()
 	if err != nil {
 		return nil, nil, err
